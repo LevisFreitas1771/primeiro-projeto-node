@@ -13,6 +13,16 @@ app.get("/contact", function(req,res){
     res.send(`C O N T A C T S <br> 1 - INSTRAGRAM <br> 2 - WHATSAPP <br> 3 - FACEBOOK`)
 });
 
+app.get("/articles/:id/:data", function(req,res){
+    if(req.params.id == "1" && req.params.data == "18-04-2025") {
+        res.send("1 - How to create apps for Androind and IOS")
+    }else if(req.params.id == "2") {
+        res.send("2 - How to use Node.js")
+    }else {
+        res.send("None articles research")
+    }
+});
+
 app.listen(8081, function(){
     console.log("Server is running")
 });
