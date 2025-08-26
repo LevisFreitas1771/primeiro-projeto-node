@@ -15,10 +15,6 @@ const Product = db.sequelize.define("products", {
     },
 });
 
-Product.create({
-    name: "RTX 4060",
-    price: "3199.99",
-    description: "Placa de Vídeo Nvidea"
-})
-
 Product.sync({force: false});
+
+module.exports = Product;

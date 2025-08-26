@@ -1,27 +1,75 @@
 const express = require("express");
 const app = express();
 
-app.get("/", function(req,res){
-    res.send("Welcome on my website")
+const Product = require("./models/Products")
+
+//Configurar body parses
+const bodyParser = require("body-parser")
+
+app.use(bodyParser.urlencoded({extended: false}))
+app.use(bodyParser.json())
+
+app.post("/register", function(req, res) {
+    Product.create({
+        name: req.body.name,
+        price: req.body.price,
+        description: req.body.description
+    })
+    .then(function() {
+        res.send("Product Register")
+    })
+    .catch(function(erro) {
+        res.send("Product Not Register " + erro)
+    })
+})
+
+
+app.get("/", function(req, res) {
+    Product.findAll()
+    .then(function(products) {
+        res.send({products: products})
+    })
+    .catch(function(erro) {
+        res.send("Erro to research products " + erro)
+    })
+})
+
+
+app.get("/:name", function(req, res) {
+    Product.findAll({where: {"name" : req.params.name}})
+    .then(function(product) {
+        res.send(product)
+    })
+    .catch(function(erro) {
+        res.send("Product Don´t Exists")
+    })
+})
+
+app.patch("/update/:id", function(req, res) {
+    Product.update({
+        name: req.body.name,
+        price: req.body.price,
+        description: req.body.description,
+    },
+        {where: {"id" : req.params.id}}
+    )
+    .then(function() {
+        res.send("Product Updated")
+    })
+    .catch(function(erro) {
+        res.send("Error to Update Product " + erro)
+    })
 });
 
-app.get("/articles", function(req,res){
-    res.send(`A R T I C L E S <br> 1 - How to crate an Android Apps. <br> 2 - How to use 'Node'.js <br> 3 - How to use Express`)
-});
-
-app.get("/contact", function(req,res){
-    res.send(`C O N T A C T S <br> 1 - INSTRAGRAM <br> 2 - WHATSAPP <br> 3 - FACEBOOK`)
-});
-
-app.get("/articles/:id/:data", function(req,res){
-    if(req.params.id == "1" && req.params.data == "18-04-2025") {
-        res.send("1 - How to create apps for Androind and IOS")
-    }else if(req.params.id == "2") {
-        res.send("2 - How to use Node.js")
-    }else {
-        res.send("None articles research")
-    }
-});
+app.delete("/delete/:id", function(req, res) {
+    Product.destroy({where: {"id" : req.params.id}})
+    .then(function() {
+        res.send("Deleted Product With Success")
+    })
+    .catch(function(erro) {
+        res.send("Erro to delete Product " + erro)
+    })
+})
 
 app.listen(8081, function(){
     console.log("Server is running")
